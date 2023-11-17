@@ -1,8 +1,11 @@
 help: ## Show this help.
 	@sed -ne '/@sed/!s/## //p' $(MAKEFILE_LIST)
 
+pants: ## Installs pants launcher binary using the get-pants script.
+	./get-pants --bin-dir .
 
-install-python-components: ## Builds and installs the python packages.
+
+install-python-components: pants ## Builds and installs the python packages.
 	./pants package ::
 	python3 -m pip install dist/*.whl --force-reinstall
 
