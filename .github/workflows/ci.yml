@@ -91,11 +91,6 @@ jobs:
           base-branch: develop
           pants-ci-config: pants.ci.toml
 
-      - name: Setup Pants
-        # necessary in case we want to do some special pants setup
-        run: |
-          make pants
-
       - name: Install smithy-python
         run: |
           make install-python-components
