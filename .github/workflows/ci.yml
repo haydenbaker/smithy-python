@@ -30,7 +30,6 @@ jobs:
           # cache0 makes it easy to bust the cache if needed
           gha-cache-key: cache0-py${{ matrix.python_version }}
           named-caches-hash: ${{ hashFiles('python-default.lock') }}
-          base-branch: develop
           pants-ci-config: pants.ci.toml
 
       - name: Run tests
@@ -89,7 +88,6 @@ jobs:
           # cache0 makes it easy to bust the cache if needed
           gha-cache-key: cache0-py${{ matrix.python_version }}
           named-caches-hash: ${{ hashFiles('python-default.lock') }}
-          base-branch: develop
           pants-ci-config: pants.ci.toml
 
       - name: Install smithy-python
