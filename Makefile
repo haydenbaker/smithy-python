@@ -49,19 +49,19 @@ test-protocols: install-python-components generate-protocol-tests run-protocol-t
 
 
 ## Runs formatters/fixers/linters for the python packages
-lint-py:
+lint-py: pants
 	./pants fix lint python-packages/smithy-python::
 	./pants fix lint python-packages/aws-smithy-python::
 
 
 ## Runs checkers for the python packages
-check-py:
+check-py: pants
 	./pants check python-packages/smithy-python::
 	./pants check python-packages/aws-smithy-python::
 
 
 ## Runs tests for the python packages
-test-py:
+test-py: pants
 	./pants test python-packages/smithy-python::
 	./pants test python-packages/aws-smithy-python::
 

@@ -33,14 +33,9 @@ jobs:
           base-branch: develop
           pants-ci-config: pants.ci.toml
 
-      - name: Setup Pants
-        # necessary in case we want to do some special pants setup
-        run: |
-          make pants
-
       - name: Run tests
         run: |
-          ./pants --no-dynamic-ui test --use-coverage ::
+          make test-py
 
       - name: Upload coverage
         if: matrix.python-version == 3.11
