@@ -17,7 +17,7 @@ jobs:
 
     steps:
       - name: Checkout Repository
-        uses: actions/checkout@v1
+        uses: actions/checkout@v3
 
       - name: Set up Python for CI - ${{ matrix.python-version }}
         uses: actions/setup-python@v4
@@ -59,7 +59,8 @@ jobs:
     name: Codegen Java 17 / Python ${{ matrix.python-version }}
 
     steps:
-      - uses: actions/checkout@v3
+      - name: Checkout Repository
+        uses: actions/checkout@v3
 
       - name: Download Corretto 17 JDK
         run: |
