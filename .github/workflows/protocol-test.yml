@@ -24,11 +24,6 @@ jobs:
           distribution: corretto
           java-version: 17
 
-      - name: Set up Python for Pants - 3.9
-        uses: actions/setup-python@v4
-        with:
-          python-version: 3.9
-
       - name: Set up Python for protocol tests - 3.11
         uses: actions/setup-python@v4
         with:
