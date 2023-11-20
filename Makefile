@@ -2,7 +2,8 @@ help: ## Show this help.
 	@sed -ne '/@sed/!s/## //p' $(MAKEFILE_LIST)
 
 
-## Installs pants launcher binary using the get-pants script. If $CI is true, copy the wrapper script.
+## Installs pants launcher binary using the get-pants script.
+## If $CI is true, assume it's installed already (through GHA), so just copy the wrapper script.
 pants:
 ifeq ($(CI),true)
 	cp scripts/pantsw pants
