@@ -14,7 +14,7 @@ jobs:
       - name: Initialize Pants
         uses: pantsbuild/actions/init-pants@main
         with:
-          # v0 makes it easy to bust the cache if needed
+          # lint-v0 makes it easy to bust the cache if needed
           # just increase the integer to start with a fresh cache
           gha-cache-key: lint-v0
           named-caches-hash: ${{ hashFiles('python-default.lock') }}
