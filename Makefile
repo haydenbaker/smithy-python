@@ -37,7 +37,7 @@ generate-protocol-tests:
 	cd codegen && ./gradlew clean :smithy-python-protocol-test:build
 
 
-## Runs already-generated protocol tests
+## Runs already-generated protocol tests.
 run-protocol-tests:
 	cd codegen/smithy-python-protocol-test/build/smithyprojections/smithy-python-protocol-test/rest-json-1/python-client-codegen && \
 	python3 -m pip install '.[tests]' && \
@@ -48,29 +48,29 @@ run-protocol-tests:
 test-protocols: install-python-components generate-protocol-tests run-protocol-tests
 
 
-## Runs formatters/fixers/linters for the python packages
+## Runs formatters/fixers/linters for the python packages.
 lint-py: pants
 	./pants fix lint python-packages/smithy-python::
 	./pants fix lint python-packages/aws-smithy-python::
 
 
-## Runs checkers for the python packages
+## Runs checkers for the python packages.
 check-py: pants
 	./pants check python-packages/smithy-python::
 	./pants check python-packages/aws-smithy-python::
 
 
-## Runs tests for the python packages
+## Runs tests for the python packages.
 test-py: pants
 	./pants test python-packages/smithy-python::
 	./pants test python-packages/aws-smithy-python::
 
 
-## Runs formatters/fixers/linters/checkers/tests for the python packages
+## Runs formatters/fixers/linters/checkers/tests for the python packages.
 build-py: lint-py check-py test-py
 
 
-## Clean up generated code, artifacts, and remove pants
+## Clean up generated code, artifacts, and remove pants.
 clean:
 	rm -rf pants dist/
 	cd codegen && ./gradlew clean
