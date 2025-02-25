@@ -1,88 +1,46 @@
+.DEFAULT_GOAL:=help
+
 help: ## Show this help.
-	@sed -ne '/@sed/!s/## //p' $(MAKEFILE_LIST)
+	@awk 'BEGIN {FS = ":.*##"; printf "\nUsage:\n  make \033[36m<target>\033[0m\n\nTargets:\n"} /^[a-zA-Z_-]+:.*?##/ { printf "  \033[36m%-25s\033[0m %s\n", $$1, $$2 }' $(MAKEFILE_LIST)
 
 
-## Installs pants launcher binary using the get-pants script.
-## If $CI is true, assume it's installed already (through GHA), so just copy the wrapper script.
-pants:
-ifeq ($(CI),true)
-	cp scripts/pantsw pants
-else
-	./get-pants --bin-dir .
-endif
+install: ## Sets up workspace (* you should run this first! *)
+	uv sync --all-packages --all-extras
+	cd codegen && ./gradlew
+	@printf "\n\nWorkspace initialized, please run:\n\033[36msource .venv/bin/activate\033[0m"
 
 
-## Packages and installs the python packages.
-install-python-components: pants
-	./pants package ::
-	python3 -m pip install dist/*.whl --force-reinstall
-
-
-## Publishes java packages to maven local.
-install-java-components:
-	cd codegen && ./gradlew publishToMavenLocal
-
-
-## Installs java and python components locally.
-install-components: install-python-components install-java-components
-
-
-## Builds the Java code generation packages.
-smithy-build:
+build-java: ## Builds the Java code generation packages.
 	cd codegen && ./gradlew clean build
 
 
-## Generates the protocol tests, rebuilding necessary Java packages.
-generate-protocol-tests:
-	cd codegen && ./gradlew clean :smithy-python-protocol-test:build
+test-protocols: ## Generates and runs the restJson1 protocol tests.
+	cd codegen && ./gradlew :protocol-test:build
+	uv run pytest codegen/protocol-test/build/smithyprojections/protocol-test/rest-json-1/python-client-codegen
 
 
-## Runs already-generated protocol tests.
-run-protocol-tests:
-	cd codegen/smithy-python-protocol-test/build/smithyprojections/smithy-python-protocol-test/rest-json-1/python-client-codegen && \
-	python3 -m pip install '.[tests]' && \
-	python3 -m pytest tests
+lint-py: ## Runs linters and formatters on the python packages.
+	uv run docformatter packages --in-place || true
+	uv run ruff check packages --fix
+	uv run ruff format packages
 
 
-## Generates and runs protocol tests.
-test-protocols: install-python-components generate-protocol-tests run-protocol-tests
+check-py: ## Runs checks (formatting, lints, type-checking) on the python packages.
+	uv run docformatter packages
+	uv run ruff check packages
+	uv run ruff format --check
+	uv run pyright packages
 
 
-## Runs formatters/fixers/linters for the python packages.
-lint-py: pants
-	./pants fix lint python-packages/smithy-core::
-	./pants fix lint python-packages/smithy-http::
-	./pants fix lint python-packages/smithy-aws-core::
-	./pants fix lint python-packages/smithy-json::
-	./pants fix lint python-packages/smithy-event-stream::
-	./pants fix lint python-packages/aws-event-stream::
+test-py: ## Runs tests for the python packages.
+	uv run pytest packages
 
 
-## Runs checkers for the python packages.
-check-py: pants
-	./pants check python-packages/smithy-core::
-	./pants check python-packages/smithy-http::
-	./pants check python-packages/smithy-aws-core::
-	./pants check python-packages/smithy-json::
-	./pants check python-packages/smithy-event-stream::
-	./pants check python-packages/aws-event-stream::
+build-py: ## Builds the python packages.
+	uv build --all-packages 
 
 
-## Runs tests for the python packages.
-test-py: pants
-	./pants test python-packages/smithy-core::
-	./pants test python-packages/smithy-http::
-	./pants test python-packages/smithy-aws-core::
-	./pants test python-packages/smithy-json::
-	./pants test python-packages/smithy-event-stream::
-	./pants test python-packages/aws-event-stream::
-
-
-## Runs formatters/fixers/linters/checkers/tests for the python packages.
-build-py: lint-py check-py test-py
-
-
-## Clean up generated code, artifacts, and remove pants.
-clean:
-	rm -rf pants dist/
+clean: ## Clean up workspace, generated code, and other artifacts.
+	uv run virtualenv --clear .venv
+	rm -r dist .pytest_cache .ruff_cache || true
 	cd codegen && ./gradlew clean
